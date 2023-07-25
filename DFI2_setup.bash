@@ -120,7 +120,7 @@ cd ${tools_dir}
 git clone https://github.com/sargraph/sargraph.github.io.git
 mv sargraph.github.io sarchart
 cd sarchart
-wget SARchart.png
+wget https://raw.githubusercontent.com/4n6ist/DFI2/main/images/SARchart.png
 sudo apt-get install -y npm
 npm install
 echo "SARchart install - done"
@@ -156,17 +156,17 @@ cat <<EOF > ${HOME}/Desktop/sarchart.desktop
 [Desktop Entry]
 Type=Link
 Name=SARchart
-Icon=${tools_dir}/sargraph/SARchart.png
+Icon=${tools_dir}/sarchart/SARchart.png
 URL=${HOME}/.local/share/applications/sarchart.desktop
 EOF
 
 cat <<EOF > ${HOME}/.local/share/applications/sarchart.desktop
 [Desktop Entry]
 Name=SARchart
-Exec=node ${tools_dir}/sargraph/src/index.js
+Exec=node ${tools_dir}/sarchart/src/index.js
 Type=Application
 Terminal=true
-Icon=${tools_dir}/sargraph/SARchart.png
+Icon=${tools_dir}/sarchart/SARchart.png
 Categories=Applications;
 EOF
 
