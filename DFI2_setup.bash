@@ -120,6 +120,7 @@ if [ $ID == "ubuntu" ]; then
     pip install --user git+https://github.com/thetimelineproj/humblewx.git
 else
     pip install --break-system-packages --user git+https://github.com/thetimelineproj/humblewx.git
+fi
 echo "Timeline install - done"
 
 echo "Installing SARchart..."
@@ -141,6 +142,7 @@ rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timelin
 if [ $XDG_CURRENT_DESKTOP != "lxde"]; then
     echo "No LXDE...skip desktop/menu config. DFI setup - done"
     exit
+fi
 
 echo "Desktop entries..."
 cat <<EOF > ${HOME}/Desktop/autopsy.desktop
