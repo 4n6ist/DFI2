@@ -116,10 +116,10 @@ wget ${timeline_dl} -O ${timeline_file}
 unzip ${timeline_file} -d ${tools_dir}
 cd ${tools_dir}/timeline-${timeline_ver}
 sudo apt-get install -y python3-pip python3-wxgtk4.0 python3-icalendar python3-markdown
-if [ $ID == "ubuntu" ]; then
-    pip install --user git+https://github.com/thetimelineproj/humblewx.git
-else
+if [ $ID == "debian" ] && [ ${VERSION_ID} == 12 ]; then
     pip install --break-system-packages --user git+https://github.com/thetimelineproj/humblewx.git
+else
+    pip install --user git+https://github.com/thetimelineproj/humblewx.git
 fi
 echo "Timeline install - done"
 
@@ -139,9 +139,9 @@ mkdir $HOME/cases
 mkdir $HOME/evidence
 rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file}
 
-if [ $XDG_CURRENT_DESKTOP != "lxde"]; then
+if [ ${XDG_CURRENT_DESKTOP^^} != "LXDE" ]; then
     echo "No LXDE...skip desktop/menu config. DFI setup - done"
-    exit
+    exit 0
 fi
 
 echo "Desktop entries..."
