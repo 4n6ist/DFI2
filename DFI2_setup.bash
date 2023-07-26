@@ -24,7 +24,7 @@ source /etc/os-release
 
 if [ $DISPLAY ] && [ $ID == "ubuntu" ] && [ ${VERSION_ID:0:1} == "2" ]; then
     echo "Supported. Continue..."
-elif [ $DISPLAY ] && [ $ID == "debian" ] && [ ${VERSION_ID} -lt  10 ]; then
+elif [ $DISPLAY ] && [ $ID == "debian" ] && [ ${VERSION_ID} -gt  10 ]; then
     echo "Supported. Continue..."
 else
     echo "The script doesn't support in the machine."
