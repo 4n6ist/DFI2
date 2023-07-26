@@ -22,9 +22,13 @@ mkdir -p ${tools_dir}
 
 source /etc/os-release
 
-if [ ! -r /etc/os-release ] || [ x$ID != xdebian ] || [ $VERSION_ID -lt  11 ]; then
-    echo This requires Debian 12.
-    exit 1
+if [ $DISPLAY ] && [ $ID == "ubuntu" ] && [ ${VERSION_ID:0:1} == "2" ]; then
+    echo "Supported. Continue..."
+elif [ $DISPLAY ] && [ $ID == "debian" ] && [ ${VERSION_ID} -lt  10 ]; then
+    echo "Supported. Continue..."
+else
+    echo "The script doesn't support in the machine."
+	exit 1
 fi
 
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential ext4magic extundelete git john libewf-dev libewf2 mg openssh-server python3-libewf ripgrep sysstat wireshark xxd zip
@@ -109,10 +113,13 @@ echo "drawio install - done"
 echo "Installing Timeline..."
 cd ${HOME}
 wget ${timeline_dl} -O ${timeline_file}
-unzip ${timeline_file} -O ${tools_dir}
+unzip ${timeline_file} -d ${tools_dir}
 cd ${tools_dir}/timeline-${timeline_ver}
 sudo apt-get install -y python3-pip python3-wxgtk4.0 python3-icalendar python3-markdown
-pip install --break-system-packages --user git+https://github.com/thetimelineproj/humblewx.git
+if [ $ID == "ubuntu" ]; then
+    pip install --user git+https://github.com/thetimelineproj/humblewx.git
+else
+    pip install --break-system-packages --user git+https://github.com/thetimelineproj/humblewx.git
 echo "Timeline install - done"
 
 echo "Installing SARchart..."
@@ -124,6 +131,16 @@ wget https://raw.githubusercontent.com/4n6ist/DFI2/main/images/SARchart.png
 sudo apt-get install -y npm
 npm install
 echo "SARchart install - done"
+
+echo "Config and clean-up..."
+cd $HOME
+mkdir $HOME/cases
+mkdir $HOME/evidence
+rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file}
+
+if [ $XDG_CURRENT_DESKTOP != "lxde"]; then
+    echo "No LXDE...skip desktop/menu config. DFI setup - done"
+    exit
 
 echo "Desktop entries..."
 cat <<EOF > ${HOME}/Desktop/autopsy.desktop
@@ -188,10 +205,4 @@ Icon=${tools_dir}/timeline-${timeline_ver}/icons/Timeline.ico
 Categories=Applications;
 EOF
 
-echo "Config and clean-up..."
-cd $HOME
-
-mkdir $HOME/cases
-mkdir $HOME/evidence
-rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file}
 echo "DFI setup - done"
