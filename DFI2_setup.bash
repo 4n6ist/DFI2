@@ -37,8 +37,8 @@ else
 	exit 1
 fi
 
-echo "Installing forensc utilities..."
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ext4magic extundelete git john libewf-dev libewf2 mg netcat-tradditional openssh-server python3-libewf ripgrep ssdeep strace sysstat wireshark xxd zip
+echo "Installing forensic utilities..."
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ext4magic extundelete git john libewf-dev libewf2 mg netcat-traditional openssh-server python3-libewf ripgrep ssdeep strace sysstat wireshark xxd zip
 sudo systemctl disable ssh
 sudo systemctl stop ssh
 
