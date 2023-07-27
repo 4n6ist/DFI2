@@ -228,7 +228,7 @@ EOF
 cat <<EOF > ${HOME}/.local/share/applications/sarchart.desktop
 [Desktop Entry]
 Name=SARchart
-Exec=node ${tools_dir}/sarchart/src/index.js
+Exec=bash -c 'node ${tools_dir}/sarchart/src/index.js & firefox http://localhost:3000'
 Type=Application
 Terminal=true
 Icon=${tools_dir}/sarchart/SARchart.png
