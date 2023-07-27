@@ -147,7 +147,7 @@ fi
 echo "Installing CyberChef..."
 cd ${HOME}
 wget ${cyberchef_dl}
-unzip ${cyberchef_file} -d ${tools_dir}/cyberchef_${cyberchef_file}
+unzip ${cyberchef_file} -d ${tools_dir}/cyberchef_${cyberchef_ver}
 
 echo "Installing Active Disk Editor..."
 cd ${HOME}
