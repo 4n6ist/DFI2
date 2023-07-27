@@ -16,6 +16,12 @@ drawio_dl="https://github.com/jgraph/drawio-desktop/releases/download/v${drawio_
 timeline_ver="2.8.0"
 timeline_file="timeline-${timeline_ver}.zip"
 timeline_dl="http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/${timeline_ver}/${timeline_file}/download"
+cyberchef_ver="v10.5.2"
+cyberchef_file="CyberChef_${cyberchef_file}.zip"
+cyberchef_dl="https://gchq.github.io/CyberChef/${cyberchef_file}"
+diskeditor_file="DiskEditor.tar.gz"
+diskeditor_install="DiskEditor_Linux_Installer.run"
+diskeditor_dl="https://www.disk-editor.org/download/DiskEditor.tar.gz"
 
 cd ${HOME}
 mkdir -p ${tools_dir}
@@ -31,7 +37,10 @@ else
 	exit 1
 fi
 
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential ext4magic extundelete git john libewf-dev libewf2 mg openssh-server python3-libewf ripgrep sysstat wireshark xxd zip
+echo "Installing forensc utilities..."
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ext4magic extundelete git john libewf-dev libewf2 mg netcat-tradditional openssh-server python3-libewf ripgrep ssdeep strace sysstat wireshark xxd zip
+sudo systemctl disable ssh
+sudo systemctl stop ssh
 
 echo "Installing dependencies for Autopsy..."
 sudo apt-get update
@@ -42,7 +51,7 @@ sudo apt-get install -y build-essential autoconf libtool automake ant libde265-d
     gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio flatpak
 
 if [[ $? -ne 0 ]]; then
-    echo "Failed to install necessary dependencies" >>/dev/stderr
+    echo "Failed to install dependencies for Autopsy" >>/dev/stderr
     exit 1
 fi
 
@@ -85,30 +94,26 @@ ${autopsy_dir}/bin/autopsy --nosplash
 find ${autopsy_dir} -name "*.exe" -type f -exec rm {} \;
 find ${autopsy_dir} -name "*.dll" -type f -exec rm {} \;
 rm -rf ${autopsy_dir}/autopsy/plaso/*
-echo "Autopsy install - done"
 
 echo "Installing Bulk Extractor..."
 cd $HOME
 git clone --recurse-submodules https://github.com/simsong/bulk_extractor.git 
 MPKGS="flex gcc md5deep openssl patch g[+][+] libssl-dev libexpat1-dev libewf-dev libewf2 python3-libewf zlib1g-dev libxml2-dev libjson-c-dev"
 sudo apt-get install -y $MPKGS
-if [ $? -ne 0 ]; then
-  echo "Failed to install necessary dependencies"
-  exit 1
-fi
-
 cd ${HOME}/bulk_extractor
 ./bootstrap.sh
 ./configure
 make
 sudo make install
-echo "Bulk Extractor install - done"
+if [[ $? -ne 0 ]]; then
+    echo "Failed to install Bulk Extractor" >>/dev/stderr
+    exit 1
+fi
 
 echo "Installing drawio..."
 cd $HOME
 wget ${drawio_dl}
 sudo dpkg -i ${drawio_file}
-echo "drawio install - done"
 
 echo "Installing Timeline..."
 cd ${HOME}
@@ -121,7 +126,10 @@ if [ $ID == "debian" ] && [ ${VERSION_ID} == 12 ]; then
 else
     pip install --user git+https://github.com/thetimelineproj/humblewx.git
 fi
-echo "Timeline install - done"
+if [[ $? -ne 0 ]]; then
+    echo "Failed to install Timeline" >>/dev/stderr
+    exit 1
+fi
 
 echo "Installing SARchart..."
 cd ${tools_dir}
@@ -131,13 +139,27 @@ cd sarchart
 wget https://raw.githubusercontent.com/4n6ist/DFI2/main/images/SARchart.png
 sudo apt-get install -y npm
 npm install
-echo "SARchart install - done"
+if [[ $? -ne 0 ]]; then
+    echo "Failed to install SARchart" >>/dev/stderr
+    exit 1
+fi
+
+echo "Installing CyberChef..."
+cd ${HOME}
+wget ${cyberchef_dl}
+unzip ${cyberchef_file} -d ${tools_dir}/cyberchef_${cyberchef_file}
+
+echo "Installing Active Disk Editor..."
+cd ${HOME}
+wget ${diskeditor_dl}
+tar xvzf ${diskeditor_file}
+sudo ${HOME}/${diskeditor_install}
 
 echo "Config and clean-up..."
 cd $HOME
 mkdir $HOME/cases
 mkdir $HOME/evidence
-rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file}
+rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file} ${cyberchef_file} ${diskeditor_file} ${diskeditor_install}
 
 if [ ${XDG_CURRENT_DESKTOP^^} != "LXDE" ]; then
     echo "No LXDE...skip desktop/menu config. DFI setup - done"
@@ -145,6 +167,30 @@ if [ ${XDG_CURRENT_DESKTOP^^} != "LXDE" ]; then
 fi
 
 echo "Desktop entries..."
+cat <<EOF > ${HOME}/Desktop/lxterminal.desktop
+[Desktop Entry]
+Type=Link
+Name=LXTerminal
+Icon=lxterminal
+URL=/usr/share/applications/lxterminal.desktop
+EOF
+
+cat <<EOF > ${HOME}/Desktop/pcmanfm.desktop
+[Desktop Entry]
+Type=Link
+Name=File Manager
+Icon=system-file-manager
+URL=/usr/share/applications/pcmanfm.desktop
+EOF
+
+cat <<EOF > ${HOME}/Desktop/firefox-esr.desktop
+[Desktop Entry]
+Type=Link
+Name=Firefox ESR
+Icon=firefox-esr
+URL=/usr/share/applications/firefox-esr.desktop
+EOF
+
 cat <<EOF > ${HOME}/Desktop/autopsy.desktop
 [Desktop Entry]
 Type=Link
@@ -206,5 +252,59 @@ Terminal=false
 Icon=${tools_dir}/timeline-${timeline_ver}/icons/Timeline.ico
 Categories=Applications;
 EOF
+
+cat <<EOF > ${HOME}/Desktop/bulkextractor.desktop
+[Desktop Entry]
+Type=Link
+Name=Bulk Extractor
+Icon=system
+URL=${HOME}/.local/share/applications/bulkextractor.desktop
+EOF
+
+cat <<EOF > ${HOME}/.local/share/applications/bulkextractor.desktop
+[Desktop Entry]
+Name=Bulk Extractor
+Exec=lxterminal -e 'bash -c "bulk_extractor -h; exec bash"'
+Type=Application
+Terminal=true
+Icon=system
+Categories=Applications;
+EOF
+
+cat <<EOF > ${HOME}/.local/share/applications/org.wireshark.Wireshark.desktop
+[Desktop Entry]
+Type=Link
+Name=Wireshark
+Icon=org.wireshark.Wireshark
+URL=/usr/share/applications/org.wireshark.Wireshark.desktop
+EOF
+
+cat <<EOF > ${HOME}/Desktop/cyberchef.desktop
+[Desktop Entry]
+Type=Link
+Name=CyberChef
+Icon=${tools_dir}/cyberchef_${cyberchef_ver}/images/cyberchef-128x128.png
+URL=${HOME}/.local/share/applications/cyberchef.desktop
+EOF
+
+cat <<EOF > ${HOME}/.local/share/applications/cyberchef.desktop
+[Desktop Entry]
+Name=CyberChef
+Exec=firefox ${tools_dir}/cyberchef_${cyberchef_ver}/CyberChef_${cyberchef_ver}.html
+Icon=${tools_dir}/cyberchef_${cyberchef_ver}/images/cyberchef-128x128.png
+Type=Application
+Terminal=false
+Categories=Applications;
+EOF
+
+cat <<EOF > ${HOME}/Desktop/diskeditor.desktop
+[Desktop Entry]
+Type=Link
+Name=Active@ Disk Editor
+URL=/usr/share/applications/DiskEditor.desktop
+Icon=DiskEditor
+EOF
+
+wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxpanel/LXDE/panels/panel -O ${HOME}/.config/lxpanel/LXDE/panels/panel
 
 echo "DFI setup - done"
