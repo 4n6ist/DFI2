@@ -230,7 +230,7 @@ cat <<EOF > ${HOME}/.local/share/applications/sarchart.desktop
 Name=SARchart
 Exec=bash -c 'node ${tools_dir}/sarchart/src/index.js & firefox http://localhost:3000'
 Type=Application
-Terminal=true
+Terminal=false
 Icon=${tools_dir}/sarchart/SARchart.png
 Categories=Applications;
 EOF
@@ -266,7 +266,7 @@ cat <<EOF > ${HOME}/.local/share/applications/bulkextractor.desktop
 Name=Bulk Extractor
 Exec=lxterminal -e 'bash -c "bulk_extractor -h; exec bash"'
 Type=Application
-Terminal=true
+Terminal=false
 Icon=system
 Categories=Applications;
 EOF
