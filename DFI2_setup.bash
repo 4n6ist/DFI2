@@ -159,6 +159,8 @@ echo "Config and clean-up..."
 cd $HOME
 mkdir $HOME/cases
 mkdir $HOME/evidence
+sudo mkdir /mnt/dd
+sudo mkdir /mnt/e0
 rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file} ${cyberchef_file} ${diskeditor_file} ${diskeditor_install}
 
 if [ ${XDG_CURRENT_DESKTOP^^} != "LXDE" ]; then
