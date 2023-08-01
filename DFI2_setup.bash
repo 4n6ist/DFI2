@@ -176,6 +176,7 @@ Name=LXTerminal
 Icon=lxterminal
 URL=/usr/share/applications/lxterminal.desktop
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/Desktop/pcmanfm.desktop
 [Desktop Entry]
@@ -184,6 +185,7 @@ Name=File Manager
 Icon=system-file-manager
 URL=/usr/share/applications/pcmanfm.desktop
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/Desktop/firefox-esr.desktop
 [Desktop Entry]
@@ -192,6 +194,7 @@ Name=Firefox ESR
 Icon=firefox-esr
 URL=/usr/share/applications/firefox-esr.desktop
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/Desktop/autopsy.desktop
 [Desktop Entry]
@@ -200,6 +203,7 @@ Name=Autopsy
 Icon=${tools_dir}/autopsy-${autopsy_ver}/icon.ico
 URL=${HOME}/.local/share/applications/autopsy.desktop
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/.local/share/applications/autopsy.desktop
 [Desktop Entry]
@@ -210,6 +214,7 @@ Terminal=false
 Icon=${tools_dir}/autopsy-${autopsy_ver}/icon.ico
 Categories=Applications;
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/Desktop/drawio.desktop
 [Desktop Entry]
@@ -218,6 +223,7 @@ Name=drawio
 Icon=drawio
 URL=/usr/share/applications/drawio.desktop
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/Desktop/sarchart.desktop
 [Desktop Entry]
@@ -226,6 +232,7 @@ Name=SARchart
 Icon=${tools_dir}/sarchart/SARchart.png
 URL=${HOME}/.local/share/applications/sarchart.desktop
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/.local/share/applications/sarchart.desktop
 [Desktop Entry]
@@ -236,6 +243,7 @@ Terminal=false
 Icon=${tools_dir}/sarchart/SARchart.png
 Categories=Applications;
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/Desktop/timline.desktop
 [Desktop Entry]
@@ -244,6 +252,7 @@ Name=Timeline
 Icon=${tools_dir}/timeline-${timeline_ver}/icons/Timeline.ico
 URL=${HOME}/.local/share/applications/timeline.desktop
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/.local/share/applications/timeline.desktop
 [Desktop Entry]
@@ -254,6 +263,7 @@ Terminal=false
 Icon=${tools_dir}/timeline-${timeline_ver}/icons/Timeline.ico
 Categories=Applications;
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/Desktop/bulkextractor.desktop
 [Desktop Entry]
@@ -262,6 +272,7 @@ Name=Bulk Extractor
 Icon=system
 URL=${HOME}/.local/share/applications/bulkextractor.desktop
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/.local/share/applications/bulkextractor.desktop
 [Desktop Entry]
@@ -272,14 +283,16 @@ Terminal=false
 Icon=system
 Categories=Applications;
 EOF
+sleep 1
 
-cat <<EOF > ${HOME}/.local/share/applications/org.wireshark.Wireshark.desktop
+cat <<EOF > ${HOME}/Desktop/org.wireshark.Wireshark.desktop
 [Desktop Entry]
 Type=Link
 Name=Wireshark
 Icon=org.wireshark.Wireshark
 URL=/usr/share/applications/org.wireshark.Wireshark.desktop
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/Desktop/cyberchef.desktop
 [Desktop Entry]
@@ -288,6 +301,7 @@ Name=CyberChef
 Icon=${tools_dir}/cyberchef_${cyberchef_ver}/images/cyberchef-128x128.png
 URL=${HOME}/.local/share/applications/cyberchef.desktop
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/.local/share/applications/cyberchef.desktop
 [Desktop Entry]
@@ -298,6 +312,7 @@ Type=Application
 Terminal=false
 Categories=Applications;
 EOF
+sleep 1
 
 cat <<EOF > ${HOME}/Desktop/diskeditor.desktop
 [Desktop Entry]
@@ -306,6 +321,7 @@ Name=Active@ Disk Editor
 URL=/usr/share/applications/DiskEditor.desktop
 Icon=DiskEditor
 EOF
+sleep 1
 
 wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxpanel/LXDE/panels/panel -O ${HOME}/.config/lxpanel/LXDE/panels/panel
 
