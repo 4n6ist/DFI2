@@ -3,14 +3,14 @@
 # bash DFI2_setup.bash
 
 tools_dir="${HOME}/tools"
-sleuthkit_ver="4.12.0"
+sleuthkit_ver="4.12.1"
 sleuthkit_file="sleuthkit-java_${sleuthkit_ver}-1_amd64.deb"
 sleuthkit_dl="https://github.com/sleuthkit/sleuthkit/releases/download/sleuthkit-${sleuthkit_ver}/${sleuthkit_file}"
-autopsy_ver="4.20.0"
+autopsy_ver="4.21.0"
 autopsy_file="autopsy-${autopsy_ver}.zip"
 autopsy_dl="https://github.com/sleuthkit/autopsy/releases/download/autopsy-${autopsy_ver}/${autopsy_file}"
 autopsy_dir="${HOME}/tools/autopsy-${autopsy_ver}"
-drawio_ver="21.6.5"
+drawio_ver="21.6.8"
 drawio_file="drawio-amd64-${drawio_ver}.deb"
 drawio_dl="https://github.com/jgraph/drawio-desktop/releases/download/v${drawio_ver}/${drawio_file}"
 timeline_ver="2.8.0"
@@ -44,31 +44,38 @@ sudo systemctl stop ssh
 
 echo "Installing dependencies for Autopsy..."
 sudo apt-get update
-sudo apt-get install -y build-essential autoconf libtool automake ant libde265-dev libheif-dev libpq-dev \
+sudo apt-get install -y openjdk-17-jdk openjdk-17-jre \
+    build-essential autoconf libtool automake ant libde265-dev libheif-dev libpq-dev \
     testdisk libafflib-dev libewf-dev libvhdi-dev libvmdk-dev \
     libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x \
-    gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio flatpak
+    gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
 
 if [[ $? -ne 0 ]]; then
     echo "Failed to install dependencies for Autopsy" >>/dev/stderr
     exit 1
 fi
 
-echo "Installing bellsoft Java 8..."
-wget -q -O - https://download.bell-sw.com/pki/GPG-KEY-bellsoft | sudo apt-key add - &&
-echo "deb [arch=amd64] https://apt.bell-sw.com/ stable main" | sudo tee /etc/apt/sources.list.d/bellsoft.list &&
-sudo apt-get update && sudo apt-get install -y bellsoft-java8-full bellsoft-java8-runtime-full
+#sudo apt-get install flatpak 
+#echo "Installing bellsoft Java 8..."
+#wget -q -O - https://download.bell-sw.com/pki/GPG-KEY-bellsoft | sudo apt-key add - &&
+#echo "deb [arch=amd64] https://apt.bell-sw.com/ stable main" | sudo tee /etc/apt/sources.list.d/bellsoft.list &&
+#sudo apt-get update && sudo apt-get install -y bellsoft-java8-full bellsoft-java8-runtime-full
 
-if [[ $? -ne 0 ]]; then
-    echo "Failed to install bellsoft Java 8" >>/dev/stderr
-    exit 1
-fi
+#if [[ $? -ne 0 ]]; then
+#    echo "Failed to install bellsoft Java 8" >>/dev/stderr
+#    exit 1
+#fi
 
-export JAVA_HOME="/usr/lib/jvm/bellsoft-java8-full-amd64"
+#export JAVA_HOME="/usr/lib/jvm/bellsoft-java8-full-amd64"
+#export JDK_HOME="${JAVA_HOME}"
+#export PATH="${JAVA_HOME}/bin:${PATH}"
+#sudo echo "JAVA_HOME='/usr/lib/jvm/bellsoft-java8-full-amd64'" >> ${HOME}/.bashrc
+
+export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
 export JDK_HOME="${JAVA_HOME}"
 export PATH="${JAVA_HOME}/bin:${PATH}"
-sudo echo "JAVA_HOME='/usr/lib/jvm/bellsoft-java8-full-amd64'" >> ${HOME}/.bashrc
+sudo echo "JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64'" >> ${HOME}/.bashrc
 
 echo "Installing SleuthKit..."
 sudo dpkg --configure -a
@@ -81,14 +88,17 @@ echo "Installing Autopsy..."
 cd $HOME
 wget ${autopsy_dl}
 unzip ${autopsy_file} -d ${tools_dir}
-echo "jdkhome=/usr/lib/jvm/bellsoft-java8-full-amd64" >> ${autopsy_dir}/etc/autopsy.conf
-echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java8-full-amd64" >> ${autopsy_dir}/etc/autopsy.conf
-echo "JDK=/usr/lib/jvm/bellsoft-java8-full-amd64" >> ${autopsy_dir}/etc/autopsy.conf
+#echo "jdkhome=/usr/lib/jvm/bellsoft-java8-full-amd64" >> ${autopsy_dir}/etc/autopsy.conf
+#echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java8-full-amd64" >> ${autopsy_dir}/etc/autopsy.conf
+#echo "JDK=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.conf
+echo "jdkhome=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.conf
+echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.conf
+echo "JDK=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.conf
 
 jdkhome=$JAVA_PATH
 cd ${autopsy_dir}
 chmod u+x unix_setup.sh
-bash ./unix_setup.sh -j /usr/lib/jvm/bellsoft-java8-full-amd64
+bash ./unix_setup.sh -j /usr/lib/jvm/java-17-openjdk-amd64
 echo "Launching Autopsy...push OK, close, then exit the app"
 ${autopsy_dir}/bin/autopsy --nosplash
 find ${autopsy_dir} -name "*.exe" -type f -exec rm {} \;
