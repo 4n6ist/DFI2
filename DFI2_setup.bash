@@ -27,14 +27,14 @@ diskeditor_file="DiskEditor.tar.gz"
 diskeditor_install="DiskEditor_Linux_Installer.run"
 diskeditor_dl="https://www.disk-editor.org/download/DiskEditor.tar.gz"
 
-cd ${HOME}
-mkdir -p ${tools_dir}
+cd "${HOME}"
+mkdir -p "${tools_dir}"
 
 source /etc/os-release
 
-if [ $DISPLAY ] && [ $ID == "ubuntu" ] && [ ${VERSION_ID:0:1} == "2" ]; then
+if [ "$DISPLAY" ] && [ "$ID" == "ubuntu" ] && [ "${VERSION_ID:0:1}" == "2" ]; then
     echo "Supported. Continue..."
-elif [ $DISPLAY ] && [ $ID == "debian" ] && [ ${VERSION_ID} -gt  10 ]; then
+elif [ "$DISPLAY" ] && [ "$ID" == "debian" ] && [ "${VERSION_ID}" -gt  10 ]; then
     echo "Supported. Continue..."
 else
     echo "The script doesn't support in the machine."
@@ -79,41 +79,41 @@ fi
 export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
 export JDK_HOME="${JAVA_HOME}"
 export PATH="${JAVA_HOME}/bin:${PATH}"
-sudo echo "JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64'" >> ${HOME}/.bashrc
+echo "JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64'" >> "${HOME}"/.bashrc
 
 echo "Installing SleuthKit..."
 sudo dpkg --configure -a
-cd $HOME
+cd "$HOME"
 wget ${sleuthkit_dl}
 sudo dpkg -i ${sleuthkit_file}
 sudo apt-get -y install -f
 
 echo "Installing Autopsy..."
-cd $HOME
+cd "$HOME"
 wget ${autopsy_dl}
-unzip ${autopsy_file} -d ${tools_dir}
-#echo "jdkhome=/usr/lib/jvm/bellsoft-java8-full-amd64" >> ${autopsy_dir}/etc/autopsy.conf
-#echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java8-full-amd64" >> ${autopsy_dir}/etc/autopsy.conf
-#echo "JDK=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.conf
-echo "jdkhome=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.conf
-echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.conf
-echo "JDK=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.conf
+unzip ${autopsy_file} -d "${tools_dir}"
+#echo "jdkhome=/usr/lib/jvm/bellsoft-java8-full-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
+#echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java8-full-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
+#echo "JDK=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
+echo "jdkhome=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
+echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
+echo "JDK=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
 
-fcd ${autopsy_dir}
+cd "${autopsy_dir}"
 chmod u+x unix_setup.sh
 bash ./unix_setup.sh -j /usr/lib/jvm/java-17-openjdk-amd64
 echo "Launching Autopsy...push OK, close, then exit the app"
-${autopsy_dir}/bin/autopsy --nosplash
-find ${autopsy_dir} -name "*.exe" -type f -exec rm {} \;
-find ${autopsy_dir} -name "*.dll" -type f -exec rm {} \;
-rm -rf ${autopsy_dir}/autopsy/plaso/*
+"${autopsy_dir}"/bin/autopsy --nosplash
+find "${autopsy_dir}" -name "*.exe" -type f -exec rm {} \;
+find "${autopsy_dir}" -name "*.dll" -type f -exec rm {} \;
+rm -rf "${autopsy_dir}"/autopsy/plaso/*
 
 echo "Installing Bulk Extractor..."
-cd $HOME
+cd "$HOME"
 git clone --recurse-submodules https://github.com/simsong/bulk_extractor.git 
 MPKGS="flex gcc md5deep openssl patch g[+][+] libssl-dev libexpat1-dev libewf-dev libewf2 python3-libewf zlib1g-dev libxml2-dev libjson-c-dev"
-sudo apt-get install -y $MPKGS
-cd ${HOME}/bulk_extractor
+sudo apt-get install -y "$MPKGS"
+cd "${HOME}"/bulk_extractor
 ./bootstrap.sh
 ./configure
 make
@@ -124,17 +124,17 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "Installing drawio..."
-cd $HOME
+cd "$HOME"
 wget ${drawio_dl}
 sudo dpkg -i ${drawio_file}
 
 echo "Installing Timeline..."
-cd ${HOME}
+cd "${HOME}"
 wget ${timeline_dl} -O ${timeline_file}
-unzip ${timeline_file} -d ${tools_dir}
-cd ${tools_dir}/timeline-${timeline_ver}
+unzip ${timeline_file} -d "${tools_dir}"
+cd "${tools_dir}"/timeline-${timeline_ver}
 sudo apt-get install -y python3-pip python3-wxgtk4.0 python3-icalendar python3-markdown
-if [ $ID == "debian" ] && [ ${VERSION_ID} == 12 ]; then
+if [ "$ID" == "debian" ] && [ "${VERSION_ID}" == 12 ]; then
     pip install --break-system-packages --user git+https://github.com/thetimelineproj/humblewx.git
 else
     pip install --user git+https://github.com/thetimelineproj/humblewx.git
@@ -145,7 +145,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "Installing SARchart..."
-cd ${tools_dir}
+cd "${tools_dir}"
 git clone https://github.com/sargraph/sargraph.github.io.git
 mv sargraph.github.io sarchart
 cd sarchart
@@ -158,31 +158,31 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "Installing CyberChef..."
-cd ${HOME}
+cd "${HOME}"
 wget ${cyberchef_dl}
-unzip ${cyberchef_file} -d ${tools_dir}/cyberchef_${cyberchef_ver}
+unzip ${cyberchef_file} -d "${tools_dir}"/cyberchef_${cyberchef_ver}
 
 echo "Installing Active Disk Editor..."
-cd ${HOME}
+cd "${HOME}"
 wget ${diskeditor_dl}
 tar xvzf ${diskeditor_file}
-sudo ${HOME}/${diskeditor_install}
+sudo "${HOME}"/${diskeditor_install}
 
 echo "Config and clean-up..."
-cd $HOME
-mkdir $HOME/cases
-mkdir $HOME/evidence
+cd "${HOME}"
+mkdir "${HOME}"/cases
+mkdir "${HOME}"/evidence
 sudo mkdir /mnt/dd
 sudo mkdir /mnt/e0
 rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file} ${cyberchef_file} ${diskeditor_file} ${diskeditor_install}
 
-if [ ${XDG_CURRENT_DESKTOP^^} != "LXDE" ]; then
-    echo "No LXDE...skip desktop/menu config. DFI setup - done"
+if [ "${XDG_CURRENT_DESKTOP}" != "LXDE" ]; then
+    echo "No LXDE...skip desktop, menu config. DFI setup - done"
     exit 0
 fi
 
 echo "Desktop entries..."
-cat <<EOF > ${HOME}/Desktop/lxterminal.desktop
+cat <<EOF > "${HOME}"/Desktop/lxterminal.desktop
 [Desktop Entry]
 Type=Link
 Name=LXTerminal
@@ -191,7 +191,7 @@ URL=/usr/share/applications/lxterminal.desktop
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/Desktop/pcmanfm.desktop
+cat <<EOF > "${HOME}"/Desktop/pcmanfm.desktop
 [Desktop Entry]
 Type=Link
 Name=File Manager
@@ -200,7 +200,7 @@ URL=/usr/share/applications/pcmanfm.desktop
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/Desktop/firefox-esr.desktop
+cat <<EOF > "${HOME}"/Desktop/firefox-esr.desktop
 [Desktop Entry]
 Type=Link
 Name=Firefox ESR
@@ -209,7 +209,7 @@ URL=/usr/share/applications/firefox-esr.desktop
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/Desktop/autopsy.desktop
+cat <<EOF > "${HOME}"/Desktop/autopsy.desktop
 [Desktop Entry]
 Type=Link
 Name=Autopsy
@@ -218,7 +218,7 @@ URL=${HOME}/.local/share/applications/autopsy.desktop
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/.local/share/applications/autopsy.desktop
+cat <<EOF > "${HOME}"/.local/share/applications/autopsy.desktop
 [Desktop Entry]
 Name=Autopsy
 Exec=${tools_dir}/autopsy-${autopsy_ver}/bin/autopsy
@@ -229,7 +229,7 @@ Categories=Applications;
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/Desktop/drawio.desktop
+cat <<EOF > "${HOME}"/Desktop/drawio.desktop
 [Desktop Entry]
 Type=Link
 Name=drawio
@@ -238,7 +238,7 @@ URL=/usr/share/applications/drawio.desktop
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/Desktop/sarchart.desktop
+cat <<EOF > "${HOME}"/Desktop/sarchart.desktop
 [Desktop Entry]
 Type=Link
 Name=SARchart
@@ -247,7 +247,7 @@ URL=${HOME}/.local/share/applications/sarchart.desktop
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/.local/share/applications/sarchart.desktop
+cat <<EOF > "${HOME}"/.local/share/applications/sarchart.desktop
 [Desktop Entry]
 Name=SARchart
 Exec=bash -c 'node ${tools_dir}/sarchart/src/index.js & firefox http://localhost:3000'
@@ -258,7 +258,7 @@ Categories=Applications;
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/Desktop/timline.desktop
+cat <<EOF > "${HOME}"/Desktop/timline.desktop
 [Desktop Entry]
 Type=Link
 Name=Timeline
@@ -267,7 +267,7 @@ URL=${HOME}/.local/share/applications/timeline.desktop
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/.local/share/applications/timeline.desktop
+cat <<EOF > "${HOME}"/.local/share/applications/timeline.desktop
 [Desktop Entry]
 Name=Timeline
 Exec=python3 ${tools_dir}/timeline-${timeline_ver}/source/timeline.py
@@ -278,7 +278,7 @@ Categories=Applications;
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/Desktop/bulkextractor.desktop
+cat <<EOF > "${HOME}"/Desktop/bulkextractor.desktop
 [Desktop Entry]
 Type=Link
 Name=Bulk Extractor
@@ -287,7 +287,7 @@ URL=${HOME}/.local/share/applications/bulkextractor.desktop
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/.local/share/applications/bulkextractor.desktop
+cat <<EOF > "${HOME}"/.local/share/applications/bulkextractor.desktop
 [Desktop Entry]
 Name=Bulk Extractor
 Exec=lxterminal -e 'bash -c "bulk_extractor -h; exec bash"'
@@ -298,7 +298,7 @@ Categories=Applications;
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/Desktop/org.wireshark.Wireshark.desktop
+cat <<EOF > "${HOME}"/Desktop/org.wireshark.Wireshark.desktop
 [Desktop Entry]
 Type=Link
 Name=Wireshark
@@ -307,7 +307,7 @@ URL=/usr/share/applications/org.wireshark.Wireshark.desktop
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/Desktop/cyberchef.desktop
+cat <<EOF > "${HOME}"/Desktop/cyberchef.desktop
 [Desktop Entry]
 Type=Link
 Name=CyberChef
@@ -316,7 +316,7 @@ URL=${HOME}/.local/share/applications/cyberchef.desktop
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/.local/share/applications/cyberchef.desktop
+cat <<EOF > "${HOME}"/.local/share/applications/cyberchef.desktop
 [Desktop Entry]
 Name=CyberChef
 Exec=firefox ${tools_dir}/cyberchef_${cyberchef_ver}/CyberChef_${cyberchef_ver}.html
@@ -327,7 +327,7 @@ Categories=Applications;
 EOF
 sleep 1
 
-cat <<EOF > ${HOME}/Desktop/diskeditor.desktop
+cat <<EOF > "${HOME}"/Desktop/diskeditor.desktop
 [Desktop Entry]
 Type=Link
 Name=Active@ Disk Editor
@@ -336,6 +336,6 @@ Icon=DiskEditor
 EOF
 sleep 1
 
-wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxpanel/LXDE/panels/panel -O ${HOME}/.config/lxpanel/LXDE/panels/panel
+wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxpanel/LXDE/panels/panel -O "${HOME}"/.config/lxpanel/LXDE/panels/panel
 
 echo "DFI setup - done"
