@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
+# https://www.oreilly.com/library/view/learning-modern-linux/9781098108939/
+set -o errexit
+set -o nounset
+set -o pipefail
 # DFI2 (Digital Forensics & Incident Investigation) setup
 # bash DFI2_setup.bash
 
@@ -10,10 +14,10 @@ autopsy_ver="4.21.0"
 autopsy_file="autopsy-${autopsy_ver}.zip"
 autopsy_dl="https://github.com/sleuthkit/autopsy/releases/download/autopsy-${autopsy_ver}/${autopsy_file}"
 autopsy_dir="${HOME}/tools/autopsy-${autopsy_ver}"
-drawio_ver="21.6.8"
+drawio_ver="22.0.2"
 drawio_file="drawio-amd64-${drawio_ver}.deb"
 drawio_dl="https://github.com/jgraph/drawio-desktop/releases/download/v${drawio_ver}/${drawio_file}"
-timeline_ver="2.8.0"
+timeline_ver="2.9.0"
 timeline_file="timeline-${timeline_ver}.zip"
 timeline_dl="http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/${timeline_ver}/${timeline_file}/download"
 cyberchef_ver="v10.5.2"
@@ -38,7 +42,7 @@ else
 fi
 
 echo "Installing forensic utilities..."
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ext4magic extundelete ewf-tools git john libewf-dev libewf2 mg netcat-traditional openssh-server python3-libewf ripgrep ssdeep strace sysstat wireshark xxd zip
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ext4magic extundelete ewf-tools git john libewf-dev libewf2 mg netcat-traditional openssh-server python3-libewf ripgrep ssdeep strace sysstat wireshark xxd zip wget
 sudo systemctl disable ssh
 sudo systemctl stop ssh
 
@@ -46,7 +50,7 @@ echo "Installing dependencies for Autopsy..."
 sudo apt-get update
 sudo apt-get install -y openjdk-17-jdk openjdk-17-jre \
     build-essential autoconf libtool automake ant libde265-dev libheif-dev libpq-dev \
-    testdisk libafflib-dev libewf-dev libvhdi-dev libvmdk-dev \
+    testdisk libafflib-dev libewf-dev libvhdi-dev libvmdk-dev libsqlite3-dev libc3p0-java \
     libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-tools gstreamer1.0-x \
     gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
@@ -95,8 +99,7 @@ echo "jdkhome=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.
 echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.conf
 echo "JDK=/usr/lib/jvm/java-17-openjdk-amd64" >> ${autopsy_dir}/etc/autopsy.conf
 
-jdkhome=$JAVA_PATH
-cd ${autopsy_dir}
+fcd ${autopsy_dir}
 chmod u+x unix_setup.sh
 bash ./unix_setup.sh -j /usr/lib/jvm/java-17-openjdk-amd64
 echo "Launching Autopsy...push OK, close, then exit the app"
