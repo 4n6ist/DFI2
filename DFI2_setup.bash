@@ -112,7 +112,7 @@ echo "Installing Bulk Extractor..."
 cd "$HOME"
 git clone --recurse-submodules https://github.com/simsong/bulk_extractor.git 
 MPKGS="flex gcc md5deep openssl patch g[+][+] libssl-dev libexpat1-dev libewf-dev libewf2 python3-libewf zlib1g-dev libxml2-dev libjson-c-dev"
-sudo apt-get install -y "$MPKGS"
+sudo apt-get install -y $MPKGS
 cd "${HOME}"/bulk_extractor
 ./bootstrap.sh
 ./configure
