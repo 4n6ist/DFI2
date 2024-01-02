@@ -14,7 +14,7 @@ autopsy_ver="4.21.0"
 autopsy_file="autopsy-${autopsy_ver}.zip"
 autopsy_dl="https://github.com/sleuthkit/autopsy/releases/download/autopsy-${autopsy_ver}/${autopsy_file}"
 autopsy_dir="${HOME}/tools/autopsy-${autopsy_ver}"
-drawio_ver="22.0.2"
+drawio_ver="22.1.16"
 drawio_file="drawio-amd64-${drawio_ver}.deb"
 drawio_dl="https://github.com/jgraph/drawio-desktop/releases/download/v${drawio_ver}/${drawio_file}"
 timeline_ver="2.9.0"
@@ -42,7 +42,7 @@ else
 fi
 
 echo "Installing forensic utilities..."
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y ext4magic extundelete ewf-tools git john libewf-dev libewf2 mg netcat-traditional openssh-server python3-libewf ripgrep ssdeep strace sysstat wireshark xxd zip wget
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y auditd ext4magic extundelete ewf-tools git john libewf-dev libewf2 mg netcat-traditional openssh-server python3-libewf ripgrep ssdeep strace sysstat wireshark xxd zip wget
 sudo systemctl disable ssh
 sudo systemctl stop ssh
 
