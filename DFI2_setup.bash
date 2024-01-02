@@ -338,4 +338,7 @@ sleep 1
 
 wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxpanel/LXDE/panels/panel -O "${HOME}"/.config/lxpanel/LXDE/panels/panel
 
+wget https://raw.githubusercontent.com/4n6ist/DFI2/main/images/DFI2_background.jpg -O "${tools_dir}/DFI2_background.jpg"
+sed -i "s/^wallpaper\=.*/wallpaper\=\/home\/forensics\/tools\/DFI2_background.jpg/" .config/pcmanfm/LXDE/desktop-items-0.conf 
+
 echo "DFI setup - done"
