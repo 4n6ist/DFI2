@@ -70,9 +70,6 @@ Plugin {
       id=sarchart.desktop
     }
     Button {
-      id=bulkextractor.desktop
-    }
-    Button {
       id=org.wireshark.Wireshark.desktop
     }
     Button {
