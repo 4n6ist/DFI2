@@ -155,7 +155,7 @@ echo "Clean-up..."
 rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file} ${cyberchef_file} ${diskeditor_file} ${diskeditor_install}
 
 echo "System Config..."
-sudo sed -i "s/^GRUB_TIMEOUT\=.*/GRUB_TIMEOUT\=5/" > /etc/default/grub
+sudo sed -i "s/^GRUB_TIMEOUT\=.*/GRUB_TIMEOUT\=5/" /etc/default/grub
 sudo update-grub
 sudo sh -c 'echo "forensics   ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/forensics'
 sudo timedatectl set-timezone Etc/UTC
