@@ -42,7 +42,9 @@ else
 fi
 
 echo "Installing forensic utilities..."
-sudo DEBIAN_FRONTEND=noninteractive apt-get install -y auditd ext4magic extundelete ewf-tools git john libewf-dev libewf2 mg netcat-traditional openssh-server python3-libewf ripgrep ssdeep strace sysstat wireshark xxd zip wget
+sudo DEBIAN_FRONTEND=noninteractive apt-get install -y auditd ext4magic extundelete dnsutils \
+    ewf-tools git john libewf-dev libewf2 mg netcat-traditional openssh-server python3-libewf \
+    ripgrep ssdeep strace sysstat wireshark xxd zip wget
 sudo systemctl disable ssh
 sudo systemctl stop ssh
 
@@ -60,22 +62,6 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-#sudo apt-get install flatpak 
-#echo "Installing bellsoft Java 8..."
-#wget -q -O - https://download.bell-sw.com/pki/GPG-KEY-bellsoft | sudo apt-key add - &&
-#echo "deb [arch=amd64] https://apt.bell-sw.com/ stable main" | sudo tee /etc/apt/sources.list.d/bellsoft.list &&
-#sudo apt-get update && sudo apt-get install -y bellsoft-java8-full bellsoft-java8-runtime-full
-
-#if [[ $? -ne 0 ]]; then
-#    echo "Failed to install bellsoft Java 8" >>/dev/stderr
-#    exit 1
-#fi
-
-#export JAVA_HOME="/usr/lib/jvm/bellsoft-java8-full-amd64"
-#export JDK_HOME="${JAVA_HOME}"
-#export PATH="${JAVA_HOME}/bin:${PATH}"
-#sudo echo "JAVA_HOME='/usr/lib/jvm/bellsoft-java8-full-amd64'" >> ${HOME}/.bashrc
-
 export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
 export JDK_HOME="${JAVA_HOME}"
 export PATH="${JAVA_HOME}/bin:${PATH}"
@@ -92,9 +78,6 @@ echo "Installing Autopsy..."
 cd "$HOME"
 wget ${autopsy_dl}
 unzip ${autopsy_file} -d "${tools_dir}"
-#echo "jdkhome=/usr/lib/jvm/bellsoft-java8-full-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
-#echo "JAVA_HOME=/usr/lib/jvm/bellsoft-java8-full-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
-#echo "JDK=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
 echo "jdkhome=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
 echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
 echo "JDK=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
@@ -168,18 +151,37 @@ wget ${diskeditor_dl}
 tar xvzf ${diskeditor_file}
 sudo "${HOME}"/${diskeditor_install}
 
-echo "Config and clean-up..."
+echo "Clean-up..."
+rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file} ${cyberchef_file} ${diskeditor_file} ${diskeditor_install}
+
+echo "System Config..."
+sudo sed -i "s/^GRUB_TIMEOUT\=.*/GRUB_TIMEOUT\=5/" > /etc/default/grub
+sudo update-grub
+sudo sh -c 'echo "forensics   ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/forensics'
+sudo timedatectl set-timezone Etc/UTC
+sudo mkdir /mnt/dd
+sudo mkdir /mnt/e0
+sudo apt-get install -y network-manager-gnome fcitx-mozc
+
+echo "User Config..."
 cd "${HOME}"
 mkdir "${HOME}"/cases
 mkdir "${HOME}"/evidence
-sudo mkdir /mnt/dd
-sudo mkdir /mnt/e0
-rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file} ${cyberchef_file} ${diskeditor_file} ${diskeditor_install}
+echo "complete -cf sudo" >> "${HOME}"/.bashrc
 
 if [ "${XDG_CURRENT_DESKTOP}" != "LXDE" ]; then
     echo "No LXDE...skip desktop, menu config. DFI setup - done"
     exit 0
 fi
+
+wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/gtk-3.0/bookmarks -O "${HOME}"/.config/gtk-3.0/bookmarks
+wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxpanel/LXDE/panels/panel -O "${HOME}"/.config/lxpanel/LXDE/panels/panel
+wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxterminal/lxterminal.conf -O "${HOME}"/.config/lxterminal/lxterminal.conf
+wget https://raw.githubusercontent.com/4n6ist/DFI2/main/images/DFI2_background.jpg -O "${tools_dir}/DFI2_background.jpg"
+sed -i "s/^wallpaper\=.*/wallpaper\=\/home\/forensics\/tools\/DFI2_background.jpg/" "${HOME}"/.config/pcmanfm/LXDE/desktop-items-0.conf 
+sed -i "s/^show_full_names\=.*/show_full_names\=1/" "${HOME}"/.config/libfm/libfm.confsed -i "s/^quick_exec\=.*/quick_exec\=1/" "${HOME}"/.config/libfm/libfm.confsed -i "s/^shadow_hidden\=.*/shadow_hidden\=1/" "${HOME}"/.config/libfm/libfm.confsed -i "s/^view_mode\=.*/view_mode\=list/" "${HOME}"/.config/pcmanfm/LXDE/pcmanfm.conf
+sed -i "s/^mode\:.*/mode\:           off/" "${HOME}"/.xscreensaver
+echo "xrandr -s 1440x900" >> "${HOME}"/.config/lxsession/LXDE/autostart
 
 echo "Desktop entries..."
 cat <<EOF > "${HOME}"/Desktop/lxterminal.desktop
@@ -336,9 +338,10 @@ Icon=DiskEditor
 EOF
 sleep 1
 
-wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxpanel/LXDE/panels/panel -O "${HOME}"/.config/lxpanel/LXDE/panels/panel
-
-wget https://raw.githubusercontent.com/4n6ist/DFI2/main/images/DFI2_background.jpg -O "${tools_dir}/DFI2_background.jpg"
-sed -i "s/^wallpaper\=.*/wallpaper\=\/home\/forensics\/tools\/DFI2_background.jpg/" .config/pcmanfm/LXDE/desktop-items-0.conf 
+echo "System clean up..."
+sudo apt-get remove -y cups cups-client cups-common xsane xsane-common deluge deluge-common deluge-gtk \
+    lynx lynx-common libreoffice-writer libreoffice-math mesa-vulkan-drivers system-config-printer \
+    speech-dispatcher audacious mpvsudo apt-get autoremovesudo apt-get autocleansudo apt-get cleandpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
+source "${HOME}"/.bashrc
 
 echo "DFI setup - done"
