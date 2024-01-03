@@ -179,7 +179,10 @@ wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxpanel/LXDE/pan
 wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxterminal/lxterminal.conf -O "${HOME}"/.config/lxterminal/lxterminal.conf
 wget https://raw.githubusercontent.com/4n6ist/DFI2/main/images/DFI2_background.jpg -O "${tools_dir}/DFI2_background.jpg"
 sed -i "s/^wallpaper\=.*/wallpaper\=\/home\/forensics\/tools\/DFI2_background.jpg/" "${HOME}"/.config/pcmanfm/LXDE/desktop-items-0.conf 
-sed -i "s/^show_full_names\=.*/show_full_names\=1/" "${HOME}"/.config/libfm/libfm.confsed -i "s/^quick_exec\=.*/quick_exec\=1/" "${HOME}"/.config/libfm/libfm.confsed -i "s/^shadow_hidden\=.*/shadow_hidden\=1/" "${HOME}"/.config/libfm/libfm.confsed -i "s/^view_mode\=.*/view_mode\=list/" "${HOME}"/.config/pcmanfm/LXDE/pcmanfm.conf
+sed -i "s/^show_full_names\=.*/show_full_names\=1/" "${HOME}"/.config/libfm/libfm.conf
+sed -i "s/^quick_exec\=.*/quick_exec\=1/" "${HOME}"/.config/libfm/libfm.conf
+sed -i "s/^shadow_hidden\=.*/shadow_hidden\=1/" "${HOME}"/.config/libfm/libfm.conf
+sed -i "s/^view_mode\=.*/view_mode\=list/" "${HOME}"/.config/pcmanfm/LXDE/pcmanfm.conf
 sed -i "s/^mode\:.*/mode\:           off/" "${HOME}"/.xscreensaver
 echo "xrandr -s 1440x900" >> "${HOME}"/.config/lxsession/LXDE/autostart
 
@@ -341,7 +344,12 @@ sleep 1
 echo "System clean up..."
 sudo apt-get remove -y cups cups-client cups-common xsane xsane-common deluge deluge-common deluge-gtk \
     lynx lynx-common libreoffice-writer libreoffice-math mesa-vulkan-drivers system-config-printer \
-    speech-dispatcher audacious mpvsudo apt-get autoremovesudo apt-get autocleansudo apt-get cleandpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
-source "${HOME}"/.bashrc
+    speech-dispatcher audacious mpv
+sudo apt-get autoremove
+sudo apt-get autoclean
+sudo apt-get clean
+dpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
+
+source "${HOME}"/.bashrc
 
 echo "DFI setup - done"
