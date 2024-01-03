@@ -187,7 +187,13 @@ sed -i "s/^shadow_hidden\=.*/shadow_hidden\=1/" "${HOME}"/.config/libfm/libfm.co
 sed -i "s/^view_mode\=.*/view_mode\=list/" "${HOME}"/.config/pcmanfm/LXDE/pcmanfm.conf
 pkill pcmanfm
 mkdir .config/autostart
-cat <<EOF > "${HOME}"/.config/autostart/lxrandr-autostart.desktop [Desktop Entry]Type=ApplicationName=LXRandR autostartComment=Start xrandr with settings done in LXRandRExec=sh -c 'xrandr --output Virtual1 --mode 1440x900'OnlyShowIn=LXDE
+cat <<EOF > "${HOME}"/.config/autostart/lxrandr-autostart.desktop 
+[Desktop Entry]
+Type=Application
+Name=LXRandR autostart
+Comment=Start xrandr with settings done in LXRandR
+Exec=sh -c 'xrandr --output Virtual1 --mode 1440x900'
+OnlyShowIn=LXDE
 EOF
 sleep 1
 
