@@ -155,9 +155,10 @@ echo "Clean-up..."
 rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file} ${cyberchef_file} ${diskeditor_file} ${diskeditor_install}
 
 echo "System Config..."
-sudo sed -i "s/^GRUB_TIMEOUT\=.*/GRUB_TIMEOUT\=5/" /etc/default/grub
+sudo sed -i "s/^GRUB_TIMEOUT\=.*/GRUB_TIMEOUT\=3/" /etc/default/grub
 sudo update-grub
 sudo sh -c 'echo "forensics   ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers.d/forensics'
+sudo sed -i "s/^\*mode:.*/\*mode:                  off/" /etc/X11/app-defaults/XScreenSaver
 sudo timedatectl set-timezone Etc/UTC
 sudo mkdir /mnt/dd
 sudo mkdir /mnt/e0
@@ -174,6 +175,7 @@ if [ "${XDG_CURRENT_DESKTOP}" != "LXDE" ]; then
     exit 0
 fi
 
+/usr/bin/pcmanfm
 wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/gtk-3.0/bookmarks -O "${HOME}"/.config/gtk-3.0/bookmarks
 wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxpanel/LXDE/panels/panel -O "${HOME}"/.config/lxpanel/LXDE/panels/panel
 wget https://raw.githubusercontent.com/4n6ist/DFI2/main/.config/lxterminal/lxterminal.conf -O "${HOME}"/.config/lxterminal/lxterminal.conf
@@ -183,8 +185,11 @@ sed -i "s/^show_full_names\=.*/show_full_names\=1/" "${HOME}"/.config/libfm/libf
 sed -i "s/^quick_exec\=.*/quick_exec\=1/" "${HOME}"/.config/libfm/libfm.conf
 sed -i "s/^shadow_hidden\=.*/shadow_hidden\=1/" "${HOME}"/.config/libfm/libfm.conf
 sed -i "s/^view_mode\=.*/view_mode\=list/" "${HOME}"/.config/pcmanfm/LXDE/pcmanfm.conf
-sed -i "s/^mode\:.*/mode\:           off/" "${HOME}"/.xscreensaver
-echo "xrandr -s 1440x900" >> "${HOME}"/.config/lxsession/LXDE/autostart
+pkill pcmanfm
+mkdir .config/autostart
+cat <<EOF > "${HOME}"/.config/autostart/lxrandr-autostart.desktop [Desktop Entry]Type=ApplicationName=LXRandR autostartComment=Start xrandr with settings done in LXRandRExec=sh -c 'xrandr --output Virtual1 --mode 1440x900'OnlyShowIn=LXDE
+EOF
+sleep 1
 
 echo "Desktop entries..."
 cat <<EOF > "${HOME}"/Desktop/lxterminal.desktop
@@ -345,11 +350,11 @@ echo "System clean up..."
 sudo apt-get remove -y cups cups-client cups-common xsane xsane-common deluge deluge-common deluge-gtk \
     lynx lynx-common libreoffice-writer libreoffice-math mesa-vulkan-drivers system-config-printer \
     speech-dispatcher audacious mpv
-sudo apt-get autoremove
-sudo apt-get autoclean
-sudo apt-get clean
+sudo apt-get autoremove -y
+sudo apt-get autoclean -y
+sudo apt-get clean -y
 dpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
 
 source "${HOME}"/.bashrc
 
-echo "DFI setup - done"
+echo "DFI setup done - reboot the system to apply the change"
