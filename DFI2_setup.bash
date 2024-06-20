@@ -23,7 +23,7 @@ timeline_dl="http://sourceforge.net/projects/thetimelineproj/files/thetimelinepr
 timeline_dir="${tools_dir}/timeline-${timeline_ver}"
 memprocfs_ver="v5.9.18"
 memprocfs_file="MemProcFS_files_and_binaries_${memprocfs_ver}-linux_x64-20240613.tar.gz"
-memprocfs_dl=https://github.com/ufrisk/MemProcFS/releases/download/${memprocfs_ver}/${memprocfs_file}
+memprocfs_dl=https://github.com/ufrisk/MemProcFS/releases/download/v5.9/${memprocfs_file}
 memprocfs_dir="${tools_dir}/memprocfs-${memprocfs_ver}"
 cyberchef_ver="v10.18.8"
 cyberchef_file="CyberChef_${cyberchef_ver}.zip"
@@ -122,7 +122,7 @@ echo "Installing Timeline..."
 cd "${HOME}"
 wget ${timeline_dl} -O ${timeline_file}
 unzip ${timeline_file} -d "${tools_dir}"
-cd "${timeline_dir}
+cd "${timeline_dir}"
 sudo apt-get install -y python3-pip python3-wxgtk4.0 python3-icalendar python3-markdown
 if [ "$ID" == "debian" ] && [ "${VERSION_ID}" == 12 ]; then
     pip install --break-system-packages --user git+https://github.com/thetimelineproj/humblewx.git
@@ -135,12 +135,11 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "Installing memprocfs..."
-cd "${tools_dir}"
 wget ${memprocfs_dl}
 sudo apt-get install -y fuse lz4
 mkdir ${memprocfs_dir}
 cd ${memprocfs_dir}
-tar xvzf ${memprocfs_file}
+tar xvzf ${HOME}/${memprocfs_file}
 
 echo "Installing SARchart..."
 cd "${tools_dir}"
