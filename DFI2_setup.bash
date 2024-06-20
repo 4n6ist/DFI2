@@ -13,22 +13,22 @@ sleuthkit_dl="https://github.com/sleuthkit/sleuthkit/releases/download/sleuthkit
 autopsy_ver="4.21.0"
 autopsy_file="autopsy-${autopsy_ver}.zip"
 autopsy_dl="https://github.com/sleuthkit/autopsy/releases/download/autopsy-${autopsy_ver}/${autopsy_file}"
-autopsy_dir="${HOME}/tools/autopsy-${autopsy_ver}"
+autopsy_dir="${tools_dir}/autopsy-${autopsy_ver}"
 drawio_ver="24.5.3"
 drawio_file="drawio-amd64-${drawio_ver}.deb"
 drawio_dl="https://github.com/jgraph/drawio-desktop/releases/download/v${drawio_ver}/${drawio_file}"
 timeline_ver="2.9.0"
 timeline_file="timeline-${timeline_ver}.zip"
 timeline_dl="http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/${timeline_ver}/${timeline_file}/download"
-timeline_dir="${HOME}/tools/timeline-${timeline_ver}"
-memprocfs_ver="v5.9"
-memprocfs_file="MemProcFS_files_and_binaries_v5.9.18-linux_x64-20240613.tar.gz"
+timeline_dir="${tools_dir}/timeline-${timeline_ver}"
+memprocfs_ver="v5.9.18"
+memprocfs_file="MemProcFS_files_and_binaries_${memprocfs_ver}-linux_x64-20240613.tar.gz"
 memprocfs_dl=https://github.com/ufrisk/MemProcFS/releases/download/${memprocfs_ver}/${memprocfs_file}
-memprocfs_dir="${HOME}/tools/memprocfs-${memprocfs_ver}"
+memprocfs_dir="${tools_dir}/memprocfs-${memprocfs_ver}"
 cyberchef_ver="v10.18.8"
 cyberchef_file="CyberChef_${cyberchef_ver}.zip"
 cyberchef_dl="https://gchq.github.io/CyberChef/${cyberchef_file}"
-cyberchef_dir="${HOME}/tools/cyberchef-${cyberchef_ver}"
+cyberchef_dir="${tools_dir}/cyberchef-${cyberchef_ver}"
 diskeditor_file="DiskEditor.tar.gz"
 diskeditor_install="DiskEditor_Linux_Installer.run"
 diskeditor_dl="https://www.disk-editor.org/download/DiskEditor.tar.gz"
@@ -49,7 +49,7 @@ fi
 
 echo "Installing forensic utilities..."
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y auditd cifs-utils ext4magic extundelete dnsutils \
-    ewf-tools git john libewf-dev libewf2 mg netcat-traditional openssh-server python3-libewf \
+    ewf-tools git john jq libewf-dev libewf2 mg netcat-traditional openssh-server python3-libewf \
     ripgrep ssdeep strace sysstat wireshark xxd zip wget
 sudo systemctl disable ssh
 sudo systemctl stop ssh
@@ -134,16 +134,6 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 
-echo "Installing Volatility 3..."
-cd "${tools_dir}"
-git clone https://github.com/volatilityfoundation/volatility3.git
-cd "${tools_dir}"/volatility3
-if [ "$ID" == "debian" ] && [ "${VERSION_ID}" == 12 ]; then
-  pip install --break-system-packages --user -r requirements.txt
-else
-  pip install --user -r requirements.txt
-fi
-
 echo "Installing memprocfs..."
 cd "${tools_dir}"
 wget ${memprocfs_dl}
@@ -151,7 +141,6 @@ sudo apt-get install -y fuse lz4
 mkdir ${memprocfs_dir}
 cd ${memprocfs_dir}
 tar xvzf ${memprocfs_file}
-rm ${memprocfs_file}
 
 echo "Installing SARchart..."
 cd "${tools_dir}"
@@ -178,7 +167,7 @@ tar xvzf ${diskeditor_file}
 sudo "${HOME}"/${diskeditor_install}
 
 echo "Clean-up..."
-rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file} ${cyberchef_file} ${diskeditor_file} ${diskeditor_install}
+rm -rf bulk_extractor ${autopsy_file} ${sleuthkit_file} ${drawio_file} ${timeline_file} ${cyberchef_file} ${diskeditor_file} ${diskeditor_install} ${memprocfs_file}
 
 echo "System Config..."
 sudo sed -i "s/^GRUB_TIMEOUT\=.*/GRUB_TIMEOUT\=3/" /etc/default/grub
@@ -224,200 +213,66 @@ EOF
 sleep 1
 
 echo "Desktop entries..."
-cat <<EOF > "${HOME}"/Desktop/lxterminal.desktop
+
+create_link_system() {
+  local file_name=$1
+  local name=$2
+  local icon=$3
+  local url="/usr/share/applications/${file_name}.desktop"
+  local output_file="${HOME}/Desktop/${file_name}.desktop"
+
+  cat <<EOF > "${output_file}" 
 [Desktop Entry]
 Type=Link
-Name=LXTerminal
-Icon=lxterminal
-URL=/usr/share/applications/lxterminal.desktop
+Name=$name
+Icon=$icon
+URL=$url
 EOF
-sleep 1
+  sleep 1
+}
 
-cat <<EOF > "${HOME}"/Desktop/pcmanfm.desktop
+create_link_user() {
+  local file_name=$1
+  local name=$2
+  local icon=$3
+  local url="${HOME}/.local/share/applications/${file_name}.desktop"
+  local exec=$4
+  local output_file="${HOME}/Desktop/${file_name}.desktop"
+
+  cat <<EOF > "${output_file}" 
 [Desktop Entry]
 Type=Link
-Name=File Manager
-Icon=system-file-manager
-URL=/usr/share/applications/pcmanfm.desktop
+Name=$name
+Icon=$icon
+URL=$url
 EOF
-sleep 1
 
-cat <<EOF > "${HOME}"/Desktop/firefox-esr.desktop
+  cat <<EOF > "${url}" 
 [Desktop Entry]
-Type=Link
-Name=Firefox ESR
-Icon=firefox-esr
-URL=/usr/share/applications/firefox-esr.desktop
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/Desktop/autopsy.desktop
-[Desktop Entry]
-Type=Link
-Name=Autopsy
-Icon=${tools_dir}/autopsy-${autopsy_ver}/icon.ico
-URL=${HOME}/.local/share/applications/autopsy.desktop
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/.local/share/applications/autopsy.desktop
-[Desktop Entry]
-Name=Autopsy
-Exec=${tools_dir}/autopsy-${autopsy_ver}/bin/autopsy
+Name=$name
+Exec=$exec
 Type=Application
 Terminal=false
-Icon=${tools_dir}/autopsy-${autopsy_ver}/icon.ico
+Icon=$icon
 Categories=Applications;
 EOF
-sleep 1
 
-cat <<EOF > "${HOME}"/Desktop/drawio.desktop
-[Desktop Entry]
-Type=Link
-Name=drawio
-Icon=drawio
-URL=/usr/share/applications/drawio.desktop
-EOF
-sleep 1
+  sleep 1
+}
 
-cat <<EOF > "${HOME}"/Desktop/sarchart.desktop
-[Desktop Entry]
-Type=Link
-Name=SARchart
-Icon=${tools_dir}/sarchart/SARchart.png
-URL=${HOME}/.local/share/applications/sarchart.desktop
-EOF
-sleep 1
+create_link_system "lxterminal" "LXTerminal" "lxterminal" 
+create_link_system "pcmanfm" "File Manager" "system-file-manager"
+create_link_system "firefox-esr" "Firefox ESR" "firefox-esr"
+create_link_system "drawio" "draw.io" "drawio"
+create_link_system "org.wireshark.Wireshark" "Wireshark" "org.wireshark.Wireshark"
+create_link_system "diskeditor" "Active@ Disk Editor" "DiskEditor"
 
-cat <<EOF > "${HOME}"/.local/share/applications/sarchart.desktop
-[Desktop Entry]
-Name=SARchart
-Exec=bash -c 'node ${tools_dir}/sarchart/src/index.js & firefox http://localhost:3000'
-Type=Application
-Terminal=false
-Icon=${tools_dir}/sarchart/SARchart.png
-Categories=Applications;
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/Desktop/volatility3.desktop
-[Desktop Entry]
-Type=Link
-Name=Volatility 3
-Icon=system
-URL=${HOME}/.local/share/applications/volatility3.desktop
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/.local/share/applications/volatility3.desktop
-[Desktop Entry]
-Name=Volatility 3
-Exec=lxterminal -e 'bash -c "${volatility3}/vol.py; exec bash"'
-Type=Application
-Terminal=false
-Icon=system
-Categories=Applications;
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/Desktop/memprocfs.desktop
-[Desktop Entry]
-Type=Link
-Name=MemProcFS
-Icon=system
-URL=${HOME}/.local/share/applications/memprocfs.desktop
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/.local/share/applications/memprocfs.desktop
-[Desktop Entry]
-Name=MemProcFS
-Exec=lxterminal -e 'bash -c "${memprocfs_dir}/memprocfs; exec bash"'
-Type=Application
-Terminal=false
-Icon=system
-Categories=Applications;
-EOF
-sleep 1
-
-
-cat <<EOF > "${HOME}"/Desktop/timline.desktop
-[Desktop Entry]
-Type=Link
-Name=Timeline
-Icon=${tools_dir}/timeline-${timeline_ver}/icons/Timeline.ico
-URL=${HOME}/.local/share/applications/timeline.desktop
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/.local/share/applications/timeline.desktop
-[Desktop Entry]
-Name=Timeline
-Exec=python3 ${tools_dir}/timeline-${timeline_ver}/source/timeline.py
-Type=Application
-Terminal=false
-Icon=${tools_dir}/timeline-${timeline_ver}/icons/Timeline.ico
-Categories=Applications;
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/Desktop/bulkextractor.desktop
-[Desktop Entry]
-Type=Link
-Name=Bulk Extractor
-Icon=system
-URL=${HOME}/.local/share/applications/bulkextractor.desktop
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/.local/share/applications/bulkextractor.desktop
-[Desktop Entry]
-Name=Bulk Extractor
-Exec=lxterminal -e 'bash -c "bulk_extractor -h; exec bash"'
-Type=Application
-Terminal=false
-Icon=system
-Categories=Applications;
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/Desktop/org.wireshark.Wireshark.desktop
-[Desktop Entry]
-Type=Link
-Name=Wireshark
-Icon=org.wireshark.Wireshark
-URL=/usr/share/applications/org.wireshark.Wireshark.desktop
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/Desktop/cyberchef.desktop
-[Desktop Entry]
-Type=Link
-Name=CyberChef
-Icon=${tools_dir}/cyberchef_${cyberchef_ver}/images/cyberchef-128x128.png
-URL=${HOME}/.local/share/applications/cyberchef.desktop
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/.local/share/applications/cyberchef.desktop
-[Desktop Entry]
-Name=CyberChef
-Exec=firefox ${tools_dir}/cyberchef_${cyberchef_ver}/CyberChef_${cyberchef_ver}.html
-Icon=${tools_dir}/cyberchef_${cyberchef_ver}/images/cyberchef-128x128.png
-Type=Application
-Terminal=false
-Categories=Applications;
-EOF
-sleep 1
-
-cat <<EOF > "${HOME}"/Desktop/diskeditor.desktop
-[Desktop Entry]
-Type=Link
-Name=Active@ Disk Editor
-URL=/usr/share/applications/DiskEditor.desktop
-Icon=DiskEditor
-EOF
-sleep 1
+create_link_user "autopsy" "Autopsy" "${autopsy_dir}/icon.ico" "${autopsy_dir}/bin/autopsy"
+create_link_user "sarchart" "SARchart" "${tools_dir}/sarchart/SARchart.png" "bash -c 'node ${tools_dir}/sarchart/src/index.js & firefox http://localhost:3000'"
+create_link_user "cyberchef" "CyberChef" "${cyberchef_dir}/images/cyberchef-128x128.png" "firefox ${cyberchef_dir}/CyberChef_${cyberchef_ver}.html"
+create_link_user "timeline" "The Timeline Project" "${timeline_dir}/icons/Timeline.ico" "python3 ${timeline_dir}/source/timeline.py"
+create_link_user "memprocfs" "MemProcFS" "system" "lxterminal -e 'bash -c \"${memprocfs_dir}/memprocfs; exec bash\"'"
+create_link_user "bulkextractor" "Bulk Extractor" "system" "lxterminal -e 'bash -c \"bulk_extractor -h; exec bash\"'"
 
 echo "System clean up..."
 sudo apt-get remove -y cups cups-client cups-common xsane xsane-common deluge deluge-common deluge-gtk \
