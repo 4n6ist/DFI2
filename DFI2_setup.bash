@@ -75,13 +75,13 @@ echo "JAVA_HOME='/usr/lib/jvm/java-17-openjdk-amd64'" >> "${HOME}"/.bashrc
 
 echo "Installing SleuthKit..."
 sudo dpkg --configure -a
-cd "$HOME"
+cd "${HOME}"
 wget ${sleuthkit_dl}
 sudo dpkg -i ${sleuthkit_file}
 sudo apt-get -y install -f
 
 echo "Installing Autopsy..."
-cd "$HOME"
+cd "${HOME}"
 wget ${autopsy_dl}
 unzip ${autopsy_file} -d "${tools_dir}"
 echo "jdkhome=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
@@ -98,7 +98,7 @@ find "${autopsy_dir}" -name "*.dll" -type f -exec rm {} \;
 rm -rf "${autopsy_dir}"/autopsy/plaso/*
 
 echo "Installing Bulk Extractor..."
-cd "$HOME"
+cd "${HOME}"
 git clone --recurse-submodules https://github.com/simsong/bulk_extractor.git 
 MPKGS="flex gcc md5deep openssl patch g[+][+] pkg-config libpcre2-dev libre2-dev libssl-dev libexpa\
 t1-dev libewf-dev libewf2 python3-libewf zlib1g-dev libxml2-dev libjson-c-dev"
@@ -114,7 +114,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "Installing drawio..."
-cd "$HOME"
+cd "${HOME}"
 wget ${drawio_dl}
 sudo dpkg -i ${drawio_file}
 
@@ -135,6 +135,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "Installing memprocfs..."
+cd "${HOME}"
 wget ${memprocfs_dl}
 sudo apt-get install -y fuse lz4
 mkdir ${memprocfs_dir}
