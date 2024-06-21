@@ -16,7 +16,10 @@ else
 fi
 
 sudo apt-get install libarchive-tools genisoimage
-wget https://raw.githubusercontent.com/4n6ist/DFI2/main/preseed.cfg
+
+if [ ! -f "./preseed.cfg" ]; then
+  wget https://raw.githubusercontent.com/4n6ist/DFI2/main/preseed.cfg
+fi
 mkdir isofiles
 bsdtar -C ./isofiles -xf ${filename}
 chmod +w -R isofiles/install.amd/
@@ -29,6 +32,6 @@ chmod +w md5sum.txt
 find -follow -type f ! -name md5sum.txt -print0 | xargs -0 md5sum > md5sum.txt 
 chmod -w md5sum.txt 
 cd ..
-sudo enisoimage -r -J -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o preseed-${filename} isofiles
+sudo genisoimage -r -J -b isolinux/isolinux.bin -c isolinux/boot.cat -no-emul-boot -boot-load-size 4 -boot-info-table -o preseed-${filename} isofiles
 sudo rm -rf isofiles preseed.cfg
 echo "Completed creating preseed-${filename}"
