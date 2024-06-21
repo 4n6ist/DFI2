@@ -265,7 +265,7 @@ create_link_system "pcmanfm" "File Manager" "system-file-manager"
 create_link_system "firefox-esr" "Firefox ESR" "firefox-esr"
 create_link_system "drawio" "draw.io" "drawio"
 create_link_system "org.wireshark.Wireshark" "Wireshark" "org.wireshark.Wireshark"
-create_link_system "diskeditor" "Active@ Disk Editor" "DiskEditor"
+create_link_system "DiskEditor" "Active@ Disk Editor" "DiskEditor"
 
 create_link_user "autopsy" "Autopsy" "${autopsy_dir}/icon.ico" "${autopsy_dir}/bin/autopsy"
 create_link_user "sarchart" "SARchart" "${tools_dir}/sarchart/SARchart.png" "bash -c 'node ${tools_dir}/sarchart/src/index.js & firefox http://localhost:3000'"
