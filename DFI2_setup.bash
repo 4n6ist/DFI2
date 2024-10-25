@@ -84,6 +84,7 @@ echo "Installing Autopsy..."
 cd "${HOME}"
 wget ${autopsy_dl}
 unzip ${autopsy_file} -d "${tools_dir}"
+mv "${autopsy_dir}-${autopsy_ver}" "${autopsy_dir}"
 echo "jdkhome=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
 echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
 echo "JDK=/usr/lib/jvm/java-17-openjdk-amd64" >> "${autopsy_dir}"/etc/autopsy.conf
