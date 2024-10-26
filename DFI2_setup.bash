@@ -21,11 +21,11 @@ timeline_ver="2.9.0"
 timeline_file="timeline-${timeline_ver}.zip"
 timeline_dl="http://sourceforge.net/projects/thetimelineproj/files/thetimelineproj/${timeline_ver}/${timeline_file}/download"
 timeline_dir="${tools_dir}/timeline"
-memprocfs_ver="v5.12.2"
-memprocfs_file="MemProcFS_files_and_binaries_${memprocfs_ver}-linux_x64-20241020.tar.gz"
+memprocfs_ver="v5.12.5"
+memprocfs_file="MemProcFS_files_and_binaries_${memprocfs_ver}-linux_x64-20241024.tar.gz"
 memprocfs_dl=https://github.com/ufrisk/MemProcFS/releases/download/v5.12/${memprocfs_file}
 memprocfs_dir="${tools_dir}/memprocfs"
-cyberchef_ver="v10.19.2"
+cyberchef_ver="v10.19.4"
 cyberchef_file="CyberChef_${cyberchef_ver}.zip"
 cyberchef_dl="https://gchq.github.io/CyberChef/${cyberchef_file}"
 cyberchef_dir="${tools_dir}/cyberchef"
@@ -50,7 +50,7 @@ fi
 echo "Installing forensic utilities..."
 sudo DEBIAN_FRONTEND=noninteractive apt-get install -y auditd cifs-utils ext4magic extundelete dnsutils \
     ewf-tools git john jq libewf-dev libewf2 mg netcat-traditional openssh-server python3-libewf \
-    ripgrep ssdeep strace sysstat wireshark xxd zip wget
+    ripgrep sqlite3 ssdeep strace sysstat wireshark xxd zip wget
 sudo systemctl disable ssh
 sudo systemctl stop ssh
 
@@ -123,6 +123,7 @@ echo "Installing Timeline..."
 cd "${HOME}"
 wget ${timeline_dl} -O ${timeline_file}
 unzip ${timeline_file} -d "${tools_dir}"
+mv "${timeline_dir}-${timeline_ver}" "${timeline_dir}"
 cd "${timeline_dir}"
 sudo apt-get install -y python3-pip python3-wxgtk4.0 python3-icalendar python3-markdown
 if [ "$ID" == "debian" ] && [ "${VERSION_ID}" == 12 ]; then
@@ -276,14 +277,18 @@ create_link_user "memprocfs" "MemProcFS" "system" "lxterminal -e 'bash -c \"${me
 create_link_user "bulkextractor" "Bulk Extractor" "system" "lxterminal -e 'bash -c \"bulk_extractor -h; exec bash\"'"
 
 echo "System clean up..."
-sudo apt-get remove -y cups cups-client cups-common xsane xsane-common deluge deluge-common deluge-gtk \
-    lynx lynx-common libreoffice-writer libreoffice-math mesa-vulkan-drivers system-config-printer \
-    speech-dispatcher audacious mpv
+sudo apt-get remove -y cups cups-browsed cups-client cups-common cups-daemon cups-filters-core-drivers cups-ipp-utils cups-ppdc cups-server-common \
+    xsane xsane-common deluge deluge-common deluge-gtk libcups2 libcupsfilters1 lynx lynx-common libreoffice-writer libreoffice-math \
+    mesa-vulkan-drivers system-config-printer speech-dispatcher audacious mpv
 sudo apt-get autoremove -y
 sudo apt-get autoclean -y
 sudo apt-get clean -y
 dpkg --list | grep "^rc" | cut -d " " -f 3 | xargs sudo dpkg --purge
 
+mkdir bin
+cd bin
+ln -s ~/tools/memprocfs/memprocfs memprocfs
+echo "export PATH=$PATH:~/bin" >> .bashrc
 source "${HOME}"/.bashrc
 
 echo "DFI setup done - reboot the system to apply the change"
